@@ -1,9 +1,9 @@
 import { Server as SocketIOServer, Socket } from "socket.io";
 import { Prisma } from "@prisma/client";
 import { COOKIE_NAME, verifySessionToken } from "./auth";
-import { SessionUser } from "@/types/auth";
+import { SessionUser } from "../types/auth";
 import { db } from "./db";
-import { MessageStatusRank } from "@/types/chat";
+import { MessageStatusRank } from "../types/chat";
 
 export interface AuthenticatedSocket extends Socket {
   user?: SessionUser;

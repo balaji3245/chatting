@@ -1,5 +1,5 @@
 datasource db {
-  provider = "postgresql"
+  provider = "mongodb"
   url      = env("DATABASE_URL")
 }
 
@@ -23,7 +23,7 @@ enum MessageStatus {
 }
 
 model User {
-  id           String    @id @default(cuid())
+  id           String    @id @default(cuid()) @map("_id")
   username     String    @unique
   displayName  String
   passwordHash String
@@ -39,7 +39,7 @@ model User {
 }
 
 model Session {
-  id        String   @id @default(cuid())
+  id        String   @id @default(cuid()) @map("_id")
   userId    String
   tokenHash String   @unique
   expiresAt DateTime
@@ -54,7 +54,7 @@ model Session {
 }
 
 model FailedLogin {
-  id          String    @id @default(cuid())
+  id          String    @id @default(cuid()) @map("_id")
   ipAddress   String
   username    String
   attempts    Int       @default(1)
@@ -62,11 +62,10 @@ model FailedLogin {
   lastAttempt DateTime  @default(now())
 
   @@unique([ipAddress, username])
-  @@index([ipAddress, username])
 }
 
 model Conversation {
-  id        String   @id @default("default-private-chat")
+  id        String   @id @default("default-private-chat") @map("_id")
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
@@ -74,13 +73,13 @@ model Conversation {
 }
 
 model Message {
-  id              String      @id @default(cuid())
+  id              String      @id @default(cuid()) @map("_id")
   conversationId  String      @default("default-private-chat")
   senderId        String
   clientMessageId String
   replyToId       String?
   type            MessageType @default(TEXT)
-  content         String?     @db.Text
+  content         String?
   isEdited        Boolean     @default(false)
   isDeleted       Boolean     @default(false)
   createdAt       DateTime    @default(now())
@@ -88,7 +87,7 @@ model Message {
 
   conversation Conversation @relation(fields: [conversationId], references: [id], onDelete: Cascade)
   sender       User         @relation("SentMessages", fields: [senderId], references: [id], onDelete: Cascade)
-  replyTo      Message?     @relation("Replies", fields: [replyToId], references: [id], onDelete: SetNull)
+  replyTo      Message?     @relation("Replies", fields: [replyToId], references: [id], onDelete: NoAction, onUpdate: NoAction)
   replies      Message[]    @relation("Replies")
 
   attachments Attachment[]
@@ -96,13 +95,13 @@ model Message {
   receipts    MessageReceipt[]
 
   @@unique([senderId, clientMessageId])
-  @@index([conversationId, createdAt(sort: Desc), id(sort: Desc)])
+  @@index([conversationId, createdAt, id])
   @@index([conversationId, isDeleted])
   @@index([senderId])
 }
 
 model Attachment {
-  id           String      @id @default(cuid())
+  id           String      @id @default(cuid()) @map("_id")
   messageId    String
   filename     String
   originalName String
@@ -119,7 +118,7 @@ model Attachment {
 }
 
 model Reaction {
-  id        String   @id @default(cuid())
+  id        String   @id @default(cuid()) @map("_id")
   messageId String
   userId    String
   emoji     String
@@ -133,7 +132,7 @@ model Reaction {
 }
 
 model MessageReceipt {
-  id        String        @id @default(cuid())
+  id        String        @id @default(cuid()) @map("_id")
   messageId String
   userId    String
   status    MessageStatus @default(SENT)
