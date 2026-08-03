@@ -80,23 +80,25 @@ export const MessageBubble: React.FC<MessageBubbleProps> = ({
       acc[r.emoji] = { count: 0, hasMine: false, users: [] };
     }
     acc[r.emoji].count += 1;
-    acc[r.emoji].users.push(r.user.displayName);
+    acc[r.emoji].users.push(r.user?.displayName || "User");
     if (r.userId === currentUserId) {
       acc[r.emoji].hasMine = true;
     }
     return acc;
   }, {} as Record<string, { count: number; hasMine: boolean; users: string[] }>);
 
+  // Render checkmark receipts
   const renderReceiptIcon = () => {
     const rank = MessageStatusRank[receiptStatus];
+
     if (rank === 3) {
       // READ (Blue double check)
       return (
-        <span className="text-sky-400 font-bold flex items-center -space-x-1" title="Read">
-          <svg className="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={3}>
+        <span className="text-sky-300 flex items-center -space-x-1" title="Read">
+          <svg className="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2.5}>
             <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
           </svg>
-          <svg className="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={3}>
+          <svg className="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2.5}>
             <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
           </svg>
         </span>
@@ -105,7 +107,7 @@ export const MessageBubble: React.FC<MessageBubbleProps> = ({
     if (rank === 2) {
       // DELIVERED (Grey double check)
       return (
-        <span className="text-gray-400 flex items-center -space-x-1" title="Delivered">
+        <span className="text-indigo-200 flex items-center -space-x-1" title="Delivered">
           <svg className="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2.5}>
             <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
           </svg>
@@ -117,7 +119,7 @@ export const MessageBubble: React.FC<MessageBubbleProps> = ({
     }
     // SENT (Single check)
     return (
-      <span className="text-gray-400" title="Sent">
+      <span className="text-indigo-200" title="Sent">
         <svg className="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2.5}>
           <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
         </svg>
@@ -142,11 +144,11 @@ export const MessageBubble: React.FC<MessageBubbleProps> = ({
         {/* Reply Preview Header */}
         {message.replyTo && (
           <div
-            className={`mb-1 p-2 rounded-xl text-xs border-l-2 ${
+            className={`mb-1 p-2 rounded-xl text-xs border-l-3 ${
               isMine
-                ? "bg-indigo-950/40 border-indigo-400 text-indigo-200"
-                : "bg-gray-800/80 border-gray-500 text-gray-300"
-            } w-full truncate cursor-pointer`}
+                ? "bg-indigo-700/40 border-white text-white"
+                : "bg-slate-100 border-indigo-500 text-slate-700"
+            } w-full truncate cursor-pointer shadow-xs`}
           >
             <span className="font-semibold block text-[11px] opacity-90">
               Replying to {message.replyTo.sender?.displayName || "User"}
@@ -161,15 +163,15 @@ export const MessageBubble: React.FC<MessageBubbleProps> = ({
 
         {/* Message Bubble Container */}
         <div
-          className={`relative rounded-2xl px-4 py-2.5 shadow-md ${
+          className={`relative rounded-2xl px-4 py-2.5 shadow-sm ${
             isMine
-              ? "bg-gradient-to-br from-indigo-600 to-indigo-700 text-white rounded-tr-xs"
-              : "bg-[#161f33] border border-gray-800 text-gray-100 rounded-tl-xs"
+              ? "bg-indigo-600 text-white rounded-tr-xs"
+              : "bg-white border border-slate-200/90 text-slate-800 rounded-tl-xs"
           }`}
         >
           {/* Soft Deleted Message View */}
           {message.isDeleted ? (
-            <p className="text-xs italic opacity-70 flex items-center gap-1.5 py-0.5">
+            <p className="text-xs italic opacity-75 flex items-center gap-1.5 py-0.5">
               <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path
                   strokeLinecap="round"
@@ -192,7 +194,7 @@ export const MessageBubble: React.FC<MessageBubbleProps> = ({
                         <div
                           key={att.id}
                           onClick={() => onOpenMedia(mediaUrl, "IMAGE")}
-                          className="relative rounded-xl overflow-hidden cursor-pointer max-w-xs group/img border border-white/10"
+                          className="relative rounded-xl overflow-hidden cursor-pointer max-w-xs group/img border border-black/5"
                         >
                           <img
                             src={mediaUrl}
@@ -204,7 +206,7 @@ export const MessageBubble: React.FC<MessageBubbleProps> = ({
                     }
                     if (att.category === "VIDEO") {
                       return (
-                        <div key={att.id} className="max-w-xs rounded-xl overflow-hidden border border-white/10">
+                        <div key={att.id} className="max-w-xs rounded-xl overflow-hidden border border-black/5">
                           <video src={mediaUrl} controls className="w-full max-h-60 rounded-xl" />
                         </div>
                       );
@@ -226,11 +228,11 @@ export const MessageBubble: React.FC<MessageBubbleProps> = ({
                         rel="noreferrer"
                         className={`flex items-center gap-3 p-2.5 rounded-xl border text-xs transition-colors ${
                           isMine
-                            ? "bg-indigo-700/50 border-indigo-500/50 hover:bg-indigo-700"
-                            : "bg-gray-800/80 border-gray-700 hover:bg-gray-800"
+                            ? "bg-indigo-700/50 border-indigo-500/50 hover:bg-indigo-700 text-white"
+                            : "bg-slate-50 border-slate-200 hover:bg-slate-100 text-slate-800"
                         }`}
                       >
-                        <div className="p-2 rounded-lg bg-indigo-500/20 text-indigo-300">
+                        <div className={`p-2 rounded-lg ${isMine ? "bg-white/20 text-white" : "bg-indigo-50 text-indigo-600"}`}>
                           <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                             <path
                               strokeLinecap="round"
@@ -242,7 +244,7 @@ export const MessageBubble: React.FC<MessageBubbleProps> = ({
                         </div>
                         <div className="overflow-hidden">
                           <p className="font-medium truncate">{att.originalName}</p>
-                          <p className="text-[10px] opacity-75">
+                          <p className={`text-[10px] ${isMine ? "text-indigo-200" : "text-slate-400"}`}>
                             {(att.size / 1024).toFixed(1)} KB
                           </p>
                         </div>
@@ -262,7 +264,7 @@ export const MessageBubble: React.FC<MessageBubbleProps> = ({
           )}
 
           {/* Time & Receipt Footer */}
-          <div className="flex items-center justify-end gap-1.5 mt-1 text-[10px] opacity-70 select-none">
+          <div className={`flex items-center justify-end gap-1.5 mt-1 text-[10px] select-none ${isMine ? "text-indigo-100" : "text-slate-400"}`}>
             {message.isEdited && !message.isDeleted && <span>(edited)</span>}
             <span suppressHydrationWarning>{timeFormatted}</span>
             {isMine && !message.isDeleted && renderReceiptIcon()}
@@ -279,8 +281,8 @@ export const MessageBubble: React.FC<MessageBubbleProps> = ({
                 title={meta.users.join(", ")}
                 className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs border transition-all ${
                   meta.hasMine
-                    ? "bg-indigo-600/30 border-indigo-500 text-indigo-200"
-                    : "bg-gray-800/80 border-gray-700 text-gray-300"
+                    ? "bg-indigo-50 border-indigo-300 text-indigo-700 shadow-xs font-semibold"
+                    : "bg-white border-slate-200 text-slate-700 shadow-xs"
                 }`}
               >
                 <span>{emoji}</span>
@@ -293,7 +295,7 @@ export const MessageBubble: React.FC<MessageBubbleProps> = ({
         {/* Floating Quick Actions Bar (on Hover/Touch) */}
         {showActions && !message.isDeleted && (
           <div
-            className={`absolute top-0 -translate-y-1/2 flex items-center gap-1 p-1 rounded-xl bg-[#0f172a] border border-gray-700/80 shadow-xl z-20 animate-in fade-in zoom-in-95 duration-100 ${
+            className={`absolute top-0 -translate-y-1/2 flex items-center gap-1 p-1 rounded-xl bg-white border border-slate-200 shadow-lg z-20 animate-in fade-in zoom-in-95 duration-100 ${
               isMine ? "right-2" : "left-2"
             }`}
           >
@@ -302,13 +304,13 @@ export const MessageBubble: React.FC<MessageBubbleProps> = ({
               <button
                 onClick={() => setShowEmojiPicker(!showEmojiPicker)}
                 title="Add Reaction"
-                className="p-1 rounded-lg text-gray-400 hover:text-yellow-400 hover:bg-gray-800 transition-colors"
+                className="p-1 rounded-lg text-slate-500 hover:text-amber-500 hover:bg-slate-100 transition-colors"
               >
                 😀
               </button>
 
               {showEmojiPicker && (
-                <div className="absolute bottom-full mb-2 left-0 flex items-center gap-1.5 p-1.5 rounded-xl bg-[#1e293b] border border-gray-700 shadow-2xl z-30">
+                <div className="absolute bottom-full mb-2 left-0 flex items-center gap-1.5 p-1.5 rounded-xl bg-white border border-slate-200 shadow-xl z-30">
                   {EMOJIS.map((e) => (
                     <button
                       key={e}
@@ -329,7 +331,7 @@ export const MessageBubble: React.FC<MessageBubbleProps> = ({
             <button
               onClick={() => onReply(message)}
               title="Reply"
-              className="p-1.5 rounded-lg text-gray-400 hover:text-indigo-400 hover:bg-gray-800 transition-colors"
+              className="p-1.5 rounded-lg text-slate-500 hover:text-indigo-600 hover:bg-slate-100 transition-colors"
             >
               <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path
@@ -346,7 +348,7 @@ export const MessageBubble: React.FC<MessageBubbleProps> = ({
               <button
                 onClick={() => onEdit(message)}
                 title="Edit Message"
-                className="p-1.5 rounded-lg text-gray-400 hover:text-amber-400 hover:bg-gray-800 transition-colors"
+                className="p-1.5 rounded-lg text-slate-500 hover:text-amber-600 hover:bg-slate-100 transition-colors"
               >
                 <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path
@@ -364,7 +366,7 @@ export const MessageBubble: React.FC<MessageBubbleProps> = ({
               <button
                 onClick={() => onDelete(message.id)}
                 title="Delete Message"
-                className="p-1.5 rounded-lg text-gray-400 hover:text-rose-400 hover:bg-rose-500/20 transition-colors"
+                className="p-1.5 rounded-lg text-slate-500 hover:text-rose-600 hover:bg-rose-50 transition-colors"
               >
                 <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path

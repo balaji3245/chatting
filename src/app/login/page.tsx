@@ -13,7 +13,7 @@ export default async function LoginPage() {
   }
 
   return (
-    <main className="flex flex-1 items-center justify-center min-h-screen p-4 sm:p-6 bg-[#0b0f19]">
+    <main className="flex flex-1 items-center justify-center min-h-screen p-4 sm:p-6 bg-[#f0f2f5]">
       <div className="w-full max-w-md space-y-6">
 
 

@@ -77,17 +77,17 @@ export const MessageList: React.FC<MessageListProps> = ({
     <div
       ref={containerRef}
       onScroll={handleScroll}
-      className="flex-1 overflow-y-auto px-4 md:px-6 py-4 space-y-4 bg-[#0b0f19]"
+      className="flex-1 overflow-y-auto px-4 md:px-6 py-4 space-y-4 bg-[#f0f2f5]"
     >
       {/* Load More Spinner */}
       {hasMore && (
         <div className="flex justify-center py-2">
           {isLoadingMore ? (
-            <div className="w-5 h-5 border-2 border-indigo-500 border-t-transparent rounded-full animate-spin" />
+            <div className="w-5 h-5 border-2 border-indigo-600 border-t-transparent rounded-full animate-spin" />
           ) : (
             <button
               onClick={onLoadMore}
-              className="text-xs text-indigo-400 hover:text-indigo-300 transition-colors"
+              className="text-xs text-indigo-600 font-medium hover:text-indigo-700 transition-colors bg-white px-3 py-1 rounded-full border border-slate-200 shadow-xs"
             >
               Load earlier messages
             </button>
@@ -107,7 +107,7 @@ export const MessageList: React.FC<MessageListProps> = ({
           <React.Fragment key={msg.id || msg.clientMessageId}>
             {showDateHeader && (
               <div className="flex items-center justify-center my-4">
-                <span className="px-3 py-1 rounded-full bg-[#131c2e] border border-gray-800 text-[11px] font-medium text-gray-400 select-none shadow-sm" suppressHydrationWarning>
+                <span className="px-3 py-1 rounded-full bg-white border border-slate-200/90 text-[11px] font-medium text-slate-500 select-none shadow-xs" suppressHydrationWarning>
                   {formatDateHeader(msg.createdAt)}
                 </span>
               </div>

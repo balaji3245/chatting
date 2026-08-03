@@ -72,16 +72,16 @@ export const LoginForm: React.FC = () => {
   return (
     <>
       {/* Main Pattern Lock Card */}
-      <div className="w-full max-w-md p-6 sm:p-8 rounded-3xl bg-[#111827]/90 border border-gray-800 shadow-2xl space-y-6 flex flex-col items-center relative">
+      <div className="w-full max-w-md p-6 sm:p-8 rounded-3xl bg-white border border-slate-200/90 shadow-xl space-y-6 flex flex-col items-center relative">
         {/* Title */}
         <div className="text-center space-y-1">
-          <h2 className="text-xl font-bold text-white tracking-tight flex items-center justify-center gap-2">
-            <svg className="w-6 h-6 text-indigo-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <h2 className="text-xl font-bold text-slate-900 tracking-tight flex items-center justify-center gap-2">
+            <svg className="w-6 h-6 text-indigo-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
             </svg>
             Pattern Security Lock
           </h2>
-          <p className="text-xs text-gray-400">
+          <p className="text-xs text-slate-500">
             Enter my mobile screen lock
           </p>
         </div>
@@ -98,7 +98,7 @@ export const LoginForm: React.FC = () => {
 
         {/* Error Message Display */}
         {errorMessage && (
-          <div className="p-3 rounded-xl bg-rose-500/10 border border-rose-500/30 text-rose-400 text-xs text-center w-full animate-in fade-in">
+          <div className="p-3 rounded-xl bg-rose-50 border border-rose-200 text-rose-600 text-xs text-center w-full animate-in fade-in">
             {errorMessage}
           </div>
         )}
@@ -106,22 +106,22 @@ export const LoginForm: React.FC = () => {
 
       {/* User Selection Popup Modal (After Pattern is drawn) */}
       {showUserModal && (
-      <div
-          className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/75 backdrop-blur-md animate-in fade-in duration-200"
+        <div
+          className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/40 backdrop-blur-sm animate-in fade-in duration-200"
           onTouchEnd={(e) => e.stopPropagation()}
         >
-          <div className="w-full max-w-sm bg-[#111827] border border-gray-800 rounded-3xl p-6 shadow-2xl space-y-6 animate-in zoom-in-95 duration-200 flex flex-col items-center">
+          <div className="w-full max-w-sm bg-white border border-slate-200 rounded-3xl p-6 shadow-2xl space-y-6 animate-in zoom-in-95 duration-200 flex flex-col items-center">
             {/* Modal Header */}
             <div className="text-center space-y-2">
-              <div className="w-12 h-12 rounded-2xl bg-indigo-500/10 border border-indigo-500/20 flex items-center justify-center mx-auto text-indigo-400 shadow-inner">
+              <div className="w-12 h-12 rounded-2xl bg-indigo-50 border border-indigo-100 flex items-center justify-center mx-auto text-indigo-600 shadow-sm">
                 <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
                 </svg>
               </div>
-              <h3 className="text-lg font-bold text-white tracking-tight">
+              <h3 className="text-lg font-bold text-slate-900 tracking-tight">
                 Select Profile
               </h3>
-              <p className="text-xs text-gray-400">
+              <p className="text-xs text-slate-500">
                 who you are
               </p>
             </div>
@@ -138,21 +138,21 @@ export const LoginForm: React.FC = () => {
                   e.stopPropagation();
                   if (!isSubmitting) handleUserSelectAndLogin("t");
                 }}
-                className="w-full p-3.5 rounded-2xl bg-[#162032] border border-gray-800 hover:border-indigo-500/50 hover:bg-indigo-600/10 text-left transition-all flex items-center justify-between group disabled:opacity-50 disabled:cursor-not-allowed"
+                className="w-full p-3.5 rounded-2xl bg-slate-50 border border-slate-200 hover:border-indigo-400 hover:bg-indigo-50/50 text-left transition-all flex items-center justify-between group disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 <div className="flex items-center gap-3">
                   <Avatar name="T" size="md" />
                   <div>
-                    <p className="text-sm font-semibold text-white group-hover:text-indigo-400 transition-colors">
+                    <p className="text-sm font-semibold text-slate-900 group-hover:text-indigo-600 transition-colors">
                       T
                     </p>
-                    <p className="text-xs text-gray-400">@t</p>
+                    <p className="text-xs text-slate-500">@t</p>
                   </div>
                 </div>
                 {authenticatingUser === "t" ? (
-                  <div className="w-5 h-5 border-2 border-indigo-400 border-t-transparent rounded-full animate-spin" />
+                  <div className="w-5 h-5 border-2 border-indigo-600 border-t-transparent rounded-full animate-spin" />
                 ) : (
-                  <svg className="w-5 h-5 text-gray-500 group-hover:text-indigo-400 group-hover:translate-x-0.5 transition-all" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <svg className="w-5 h-5 text-slate-400 group-hover:text-indigo-600 group-hover:translate-x-0.5 transition-all" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
                   </svg>
                 )}
@@ -168,21 +168,21 @@ export const LoginForm: React.FC = () => {
                   e.stopPropagation();
                   if (!isSubmitting) handleUserSelectAndLogin("adesh");
                 }}
-                className="w-full p-3.5 rounded-2xl bg-[#162032] border border-gray-800 hover:border-indigo-500/50 hover:bg-indigo-600/10 text-left transition-all flex items-center justify-between group disabled:opacity-50 disabled:cursor-not-allowed"
+                className="w-full p-3.5 rounded-2xl bg-slate-50 border border-slate-200 hover:border-indigo-400 hover:bg-indigo-50/50 text-left transition-all flex items-center justify-between group disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 <div className="flex items-center gap-3">
                   <Avatar name="Adesh" size="md" />
                   <div>
-                    <p className="text-sm font-semibold text-white group-hover:text-indigo-400 transition-colors">
+                    <p className="text-sm font-semibold text-slate-900 group-hover:text-indigo-600 transition-colors">
                       Adesh
                     </p>
-                    <p className="text-xs text-gray-400">@adesh</p>
+                    <p className="text-xs text-slate-500">@adesh</p>
                   </div>
                 </div>
                 {authenticatingUser === "adesh" ? (
-                  <div className="w-5 h-5 border-2 border-indigo-400 border-t-transparent rounded-full animate-spin" />
+                  <div className="w-5 h-5 border-2 border-indigo-600 border-t-transparent rounded-full animate-spin" />
                 ) : (
-                  <svg className="w-5 h-5 text-gray-500 group-hover:text-indigo-400 group-hover:translate-x-0.5 transition-all" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <svg className="w-5 h-5 text-slate-400 group-hover:text-indigo-600 group-hover:translate-x-0.5 transition-all" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
                   </svg>
                 )}
@@ -207,7 +207,7 @@ export const LoginForm: React.FC = () => {
                   setStatus("idle");
                 }
               }}
-              className="text-xs text-gray-500 hover:text-gray-300 transition-colors py-1"
+              className="text-xs text-slate-500 hover:text-slate-800 transition-colors py-1"
             >
               Cancel / Re-draw Pattern
             </button>

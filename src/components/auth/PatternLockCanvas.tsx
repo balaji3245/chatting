@@ -183,11 +183,11 @@ export const PatternLockCanvas: React.FC<PatternLockCanvasProps> = ({
       <div
         ref={containerRef}
         style={{ touchAction: "none", userSelect: "none" }}
-        className={`relative w-[280px] h-[280px] bg-[#111827]/80 backdrop-blur-md rounded-3xl border border-gray-800/90 shadow-2xl p-2 cursor-pointer transition-all ${
+        className={`relative w-[280px] h-[280px] bg-white/95 backdrop-blur-md rounded-3xl border border-slate-200 shadow-xl p-2 cursor-pointer transition-all ${
           status === "error"
-            ? "animate-shake border-rose-500/50"
+            ? "animate-shake border-rose-500/50 shadow-rose-100"
             : status === "success"
-            ? "border-emerald-500/50"
+            ? "border-emerald-500/50 shadow-emerald-100"
             : ""
         }`}
       >
@@ -241,16 +241,16 @@ export const PatternLockCanvas: React.FC<PatternLockCanvasProps> = ({
                   cy={node.y}
                   r={isActive ? 22 : 16}
                   fill={
-                    isActive ? colors.glow : "rgba(31, 41, 55, 0.5)"
+                    isActive ? colors.glow : "rgba(241, 245, 249, 0.9)"
                   }
-                  stroke={isActive ? colors.dotBorder : "#374151"}
+                  stroke={isActive ? colors.dotBorder : "#cbd5e1"}
                   strokeWidth={isActive ? 2.5 : 1.5}
                 />
                 <circle
                   cx={node.x}
                   cy={node.y}
                   r={isActive ? 8 : 5}
-                  fill={isActive ? colors.dotFill : "#9ca3af"}
+                  fill={isActive ? colors.dotFill : "#64748b"}
                 />
                 {isActive && isLast && isDrawing && (
                   <circle
@@ -276,7 +276,7 @@ export const PatternLockCanvas: React.FC<PatternLockCanvasProps> = ({
             setActiveNodes([]);
             if (onResetStatus) onResetStatus();
           }}
-          className="mt-3 text-xs text-gray-400 hover:text-white transition-colors"
+          className="mt-3 text-xs font-medium text-slate-500 hover:text-slate-900 transition-colors"
         >
           Reset Pattern
         </button>

@@ -35,11 +35,11 @@ export const Avatar: React.FC<AvatarProps> = ({
         <img
           src={url}
           alt={name}
-          className={`${sizeClasses} rounded-full object-cover border border-gray-700/50`}
+          className={`${sizeClasses} rounded-full object-cover border border-slate-200`}
         />
       ) : (
         <div
-          className={`${sizeClasses} rounded-full bg-gradient-to-br from-indigo-600 to-violet-700 text-white font-semibold flex items-center justify-center border border-indigo-500/30 shadow-inner select-none`}
+          className={`${sizeClasses} rounded-full bg-gradient-to-br from-indigo-500 to-indigo-600 text-white font-semibold flex items-center justify-center border border-indigo-200 shadow-xs select-none`}
         >
           {initial}
         </div>
@@ -47,8 +47,8 @@ export const Avatar: React.FC<AvatarProps> = ({
 
       {isOnline !== undefined && (
         <span
-          className={`absolute bottom-0 right-0 ${statusSize} rounded-full border-2 border-[#0b0f19] ${
-            isOnline ? "bg-emerald-500" : "bg-gray-500"
+          className={`absolute bottom-0 right-0 ${statusSize} rounded-full border-2 border-white ${
+            isOnline ? "bg-emerald-500" : "bg-slate-300"
           }`}
         />
       )}

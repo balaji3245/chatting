@@ -78,11 +78,11 @@ export const VoiceRecorder: React.FC<VoiceRecorderProps> = ({ onSendVoice, onCan
   };
 
   return (
-    <div className="flex items-center gap-3 px-4 py-2 bg-[#131c2e] border border-red-500/30 rounded-2xl animate-in fade-in duration-150 w-full">
+    <div className="flex items-center gap-3 px-4 py-2 bg-rose-50 border border-rose-200 rounded-2xl animate-in fade-in duration-150 w-full shadow-xs">
       {/* Recording indicator dot & Timer */}
       <div className="flex items-center gap-2">
         <span className="w-3 h-3 rounded-full bg-rose-500 animate-ping" />
-        <span className="text-sm font-mono font-medium text-white">{formatTime(seconds)}</span>
+        <span className="text-sm font-mono font-semibold text-rose-700">{formatTime(seconds)}</span>
       </div>
 
       {/* Waveform Visualizer simulation */}
@@ -90,7 +90,7 @@ export const VoiceRecorder: React.FC<VoiceRecorderProps> = ({ onSendVoice, onCan
         {[40, 70, 30, 90, 50, 80, 40, 100, 60, 30, 80, 50].map((h, i) => (
           <span
             key={i}
-            className="w-1 bg-rose-500/80 rounded-full animate-pulse"
+            className="w-1 bg-rose-500 rounded-full animate-pulse"
             style={{
               height: `${h}%`,
               animationDelay: `${(i % 4) * 0.15}s`,
@@ -103,7 +103,7 @@ export const VoiceRecorder: React.FC<VoiceRecorderProps> = ({ onSendVoice, onCan
       <div className="flex items-center gap-2">
         <button
           onClick={handleCancel}
-          className="p-2 rounded-xl text-gray-400 hover:text-white hover:bg-gray-800 transition-colors"
+          className="p-2 rounded-xl text-slate-500 hover:text-slate-800 hover:bg-rose-100 transition-colors"
           title="Cancel Voice Note"
         >
           <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -113,7 +113,7 @@ export const VoiceRecorder: React.FC<VoiceRecorderProps> = ({ onSendVoice, onCan
 
         <button
           onClick={handleSend}
-          className="p-2.5 rounded-xl bg-rose-600 hover:bg-rose-500 text-white shadow-lg shadow-rose-600/30 transition-colors"
+          className="p-2.5 rounded-xl bg-rose-600 hover:bg-rose-700 text-white shadow-md shadow-rose-600/20 transition-colors"
           title="Send Voice Note"
         >
           <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">

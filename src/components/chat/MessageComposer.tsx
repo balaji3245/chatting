@@ -181,7 +181,7 @@ export const MessageComposer: React.FC<MessageComposerProps> = ({
   const EMOJIS = ["😊", "😂", "❤️", "👍", "🔥", "🎉", "🙌", "🙏", "😍", "✨"];
 
   return (
-    <div className="p-3 md:p-4 bg-[#0f172a]/95 backdrop-blur-md border-t border-gray-800/80 sticky bottom-0 z-30">
+    <div className="p-3 md:p-4 bg-white border-t border-slate-200/90 shadow-sm sticky bottom-0 z-30">
       {/* Voice Recorder Overlay Mode */}
       {isRecordingVoice ? (
         <VoiceRecorder
@@ -192,12 +192,12 @@ export const MessageComposer: React.FC<MessageComposerProps> = ({
         <div className="max-w-4xl mx-auto space-y-2">
           {/* Replying Banner */}
           {replyingMessage && (
-            <div className="flex items-center justify-between px-3 py-1.5 rounded-xl bg-indigo-950/60 border border-indigo-500/40 text-xs text-indigo-200">
+            <div className="flex items-center justify-between px-3 py-1.5 rounded-xl bg-indigo-50 border border-indigo-200 text-xs text-indigo-800 shadow-xs">
               <div className="flex items-center gap-2 overflow-hidden">
                 <span className="font-semibold">Replying to {replyingMessage.sender.displayName}:</span>
                 <span className="italic truncate">{replyingMessage.content || `[${replyingMessage.type}]`}</span>
               </div>
-              <button onClick={onCancelReply} className="text-gray-400 hover:text-white p-1">
+              <button onClick={onCancelReply} className="text-slate-400 hover:text-slate-700 p-1">
                 ✕
               </button>
             </div>
@@ -205,9 +205,9 @@ export const MessageComposer: React.FC<MessageComposerProps> = ({
 
           {/* Editing Banner */}
           {editingMessage && (
-            <div className="flex items-center justify-between px-3 py-1.5 rounded-xl bg-amber-950/60 border border-amber-500/40 text-xs text-amber-200">
+            <div className="flex items-center justify-between px-3 py-1.5 rounded-xl bg-amber-50 border border-amber-200 text-xs text-amber-800 shadow-xs">
               <span className="font-semibold">Editing message...</span>
-              <button onClick={onCancelEdit} className="text-gray-400 hover:text-white p-1">
+              <button onClick={onCancelEdit} className="text-slate-400 hover:text-slate-700 p-1">
                 ✕
               </button>
             </div>
@@ -219,12 +219,12 @@ export const MessageComposer: React.FC<MessageComposerProps> = ({
               {selectedFiles.map((file, idx) => (
                 <div
                   key={idx}
-                  className="flex items-center gap-2 px-3 py-1.5 rounded-xl bg-[#1e293b] border border-gray-700 text-xs text-gray-200 shrink-0"
+                  className="flex items-center gap-2 px-3 py-1.5 rounded-xl bg-slate-100 border border-slate-200 text-xs text-slate-700 shrink-0"
                 >
                   <span className="truncate max-w-[120px]">{file.name}</span>
                   <button
                     onClick={() => setSelectedFiles(selectedFiles.filter((_, i) => i !== idx))}
-                    className="text-gray-400 hover:text-rose-400"
+                    className="text-slate-400 hover:text-rose-500"
                   >
                     ✕
                   </button>
@@ -246,7 +246,7 @@ export const MessageComposer: React.FC<MessageComposerProps> = ({
             <button
               type="button"
               onClick={() => fileInputRef.current?.click()}
-              className="p-2.5 rounded-xl bg-[#1a233a] hover:bg-gray-800 text-gray-400 hover:text-indigo-400 transition-colors shrink-0"
+              className="p-2.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-500 hover:text-indigo-600 transition-colors shrink-0"
               title="Attach File"
             >
               <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -268,12 +268,12 @@ export const MessageComposer: React.FC<MessageComposerProps> = ({
                 onKeyDown={handleKeyDown}
                 placeholder="Type a message..."
                 rows={1}
-                className="w-full bg-[#131c2e] border border-gray-800 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/30 rounded-2xl px-4 py-2.5 text-sm text-gray-100 placeholder-gray-500 resize-none focus:outline-none max-h-32 transition-all"
+                className="w-full bg-slate-100 border border-slate-200 focus:bg-white focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20 rounded-2xl px-4 py-2.5 text-sm text-slate-900 placeholder-slate-400 resize-none focus:outline-none max-h-32 transition-all"
               />
 
               {/* Emoji Picker Popup */}
               {showEmojiPicker && (
-                <div className="absolute bottom-full mb-2 left-0 flex items-center gap-2 p-2 rounded-2xl bg-[#1e293b] border border-gray-700 shadow-2xl z-40">
+                <div className="absolute bottom-full mb-2 left-0 flex items-center gap-2 p-2 rounded-2xl bg-white border border-slate-200 shadow-xl z-40">
                   {EMOJIS.map((e) => (
                     <button
                       key={e}
@@ -295,7 +295,7 @@ export const MessageComposer: React.FC<MessageComposerProps> = ({
             <button
               type="button"
               onClick={() => setShowEmojiPicker(!showEmojiPicker)}
-              className="p-2.5 rounded-xl bg-[#1a233a] hover:bg-gray-800 text-gray-400 hover:text-yellow-400 transition-colors shrink-0"
+              className="p-2.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-500 hover:text-amber-500 transition-colors shrink-0"
               title="Emoji"
             >
               😊
@@ -306,7 +306,7 @@ export const MessageComposer: React.FC<MessageComposerProps> = ({
               <button
                 type="button"
                 onClick={() => setIsRecordingVoice(true)}
-                className="p-2.5 rounded-xl bg-indigo-600/20 hover:bg-indigo-600/30 text-indigo-400 transition-colors shrink-0 border border-indigo-500/30"
+                className="p-2.5 rounded-xl bg-indigo-50 hover:bg-indigo-100 text-indigo-600 transition-colors shrink-0 border border-indigo-200"
                 title="Voice Note"
               >
                 <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -324,7 +324,7 @@ export const MessageComposer: React.FC<MessageComposerProps> = ({
                 onMouseDown={(e) => e.preventDefault()}
                 onClick={handleSubmit}
                 disabled={isUploading}
-                className="p-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white shadow-lg shadow-indigo-600/30 transition-all shrink-0 active:scale-95 disabled:opacity-50"
+                className="p-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white shadow-md shadow-indigo-600/20 transition-all shrink-0 active:scale-95 disabled:opacity-50"
                 title="Send Message"
               >
                 {isUploading ? (

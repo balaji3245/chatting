@@ -338,7 +338,7 @@ export const ChatAppClient: React.FC<ChatAppClientProps> = ({
   };
 
   return (
-    <div className="flex flex-col h-screen max-h-screen bg-[#0b0f19] text-gray-100 overflow-hidden font-sans">
+    <div className="flex flex-col h-screen max-h-screen bg-[#f0f2f5] text-slate-900 overflow-hidden font-sans">
       {/* Header */}
       <ChatHeader
         peerUser={peerUser}

@@ -55,9 +55,9 @@ export const SearchModal: React.FC<SearchModalProps> = ({
         {/* Results List */}
         <div className="space-y-2 max-h-80 overflow-y-auto pr-1">
           {isSearching ? (
-            <div className="text-center py-6 text-xs text-gray-400">Searching messages...</div>
+            <div className="text-center py-6 text-xs text-slate-500">Searching messages...</div>
           ) : results.length === 0 ? (
-            <div className="text-center py-6 text-xs text-gray-500">
+            <div className="text-center py-6 text-xs text-slate-400">
               {query ? "No messages found" : "Type a keyword above to search"}
             </div>
           ) : (
@@ -68,11 +68,11 @@ export const SearchModal: React.FC<SearchModalProps> = ({
                   onSelectMessage(msg.id);
                   onClose();
                 }}
-                className="p-3 rounded-xl bg-[#131c2e] hover:bg-gray-800 border border-gray-800 transition-colors cursor-pointer space-y-1"
+                className="p-3 rounded-xl bg-slate-50 hover:bg-slate-100 border border-slate-200 transition-colors cursor-pointer space-y-1"
               >
                 <div className="flex items-center justify-between text-xs">
-                  <span className="font-semibold text-indigo-400">{msg.sender.displayName}</span>
-                  <span className="text-[10px] text-gray-500" suppressHydrationWarning>
+                  <span className="font-semibold text-indigo-600">{msg.sender.displayName}</span>
+                  <span className="text-[10px] text-slate-400" suppressHydrationWarning>
                     {new Date(msg.createdAt).toLocaleDateString([], {
                       month: "short",
                       day: "numeric",
@@ -81,7 +81,7 @@ export const SearchModal: React.FC<SearchModalProps> = ({
                     })}
                   </span>
                 </div>
-                <p className="text-sm text-gray-200 line-clamp-2">{msg.content}</p>
+                <p className="text-sm text-slate-800 line-clamp-2">{msg.content}</p>
               </div>
             ))
           )}
