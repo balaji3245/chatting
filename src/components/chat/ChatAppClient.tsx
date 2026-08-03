@@ -235,7 +235,11 @@ export const ChatAppClient: React.FC<ChatAppClientProps> = ({
   const handleSendMessage = useCallback(
     ({ content, type, replyToId, attachmentFiles }: any) => {
       const socket = getSocket();
-      const clientMessageId = crypto.randomUUID();
+      // crypto.randomUUID() only works on HTTPS — use fallback for HTTP local network
+      const clientMessageId =
+        typeof crypto?.randomUUID === "function"
+          ? crypto.randomUUID()
+          : `${Date.now().toString(36)}-${Math.random().toString(36).slice(2)}-${Math.random().toString(36).slice(2)}`;
 
       // Optimistic message append
       const optimisticMsg = {

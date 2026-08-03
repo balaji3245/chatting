@@ -208,6 +208,16 @@ export function setupSocketAuth(io: SocketIOServer) {
 
             const oldestIds = oldestMessages.map((m) => m.id);
 
+            // First null out reply references in oldest messages to avoid P2014 self-referential constraint
+            await db.message.updateMany({
+              where: { id: { in: oldestIds }, replyToId: { not: null } },
+              data: { replyToId: null },
+            });
+            // Also null out replyToId of newer messages that reply TO the oldest ones
+            await db.message.updateMany({
+              where: { replyToId: { in: oldestIds } },
+              data: { replyToId: null },
+            });
             // Cascade delete: receipts, reactions, attachments, then messages
             await db.messageReceipt.deleteMany({ where: { messageId: { in: oldestIds } } });
             await db.reaction.deleteMany({ where: { messageId: { in: oldestIds } } });
@@ -242,7 +252,11 @@ export function setupSocketAuth(io: SocketIOServer) {
         const allIds = allMessages.map((m) => m.id);
 
         if (allIds.length > 0) {
-          // Cascade delete all related records then messages
+          // First null out reply references to avoid self-referential constraint (Prisma P2014)
+          await db.message.updateMany({
+            where: { conversationId: "default-private-chat", replyToId: { not: null } },
+            data: { replyToId: null },
+          });
           await db.messageReceipt.deleteMany({ where: { messageId: { in: allIds } } });
           await db.reaction.deleteMany({ where: { messageId: { in: allIds } } });
           await db.attachment.deleteMany({ where: { messageId: { in: allIds } } });

@@ -106,7 +106,10 @@ export const LoginForm: React.FC = () => {
 
       {/* User Selection Popup Modal (After Pattern is drawn) */}
       {showUserModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/75 backdrop-blur-md animate-in fade-in duration-200">
+      <div
+          className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/75 backdrop-blur-md animate-in fade-in duration-200"
+          onTouchEnd={(e) => e.stopPropagation()}
+        >
           <div className="w-full max-w-sm bg-[#111827] border border-gray-800 rounded-3xl p-6 shadow-2xl space-y-6 animate-in zoom-in-95 duration-200 flex flex-col items-center">
             {/* Modal Header */}
             <div className="text-center space-y-2">
@@ -130,6 +133,11 @@ export const LoginForm: React.FC = () => {
                 type="button"
                 disabled={isSubmitting}
                 onClick={() => handleUserSelectAndLogin("t")}
+                onTouchEnd={(e) => {
+                  e.preventDefault();
+                  e.stopPropagation();
+                  if (!isSubmitting) handleUserSelectAndLogin("t");
+                }}
                 className="w-full p-3.5 rounded-2xl bg-[#162032] border border-gray-800 hover:border-indigo-500/50 hover:bg-indigo-600/10 text-left transition-all flex items-center justify-between group disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 <div className="flex items-center gap-3">
@@ -155,6 +163,11 @@ export const LoginForm: React.FC = () => {
                 type="button"
                 disabled={isSubmitting}
                 onClick={() => handleUserSelectAndLogin("adesh")}
+                onTouchEnd={(e) => {
+                  e.preventDefault();
+                  e.stopPropagation();
+                  if (!isSubmitting) handleUserSelectAndLogin("adesh");
+                }}
                 className="w-full p-3.5 rounded-2xl bg-[#162032] border border-gray-800 hover:border-indigo-500/50 hover:bg-indigo-600/10 text-left transition-all flex items-center justify-between group disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 <div className="flex items-center gap-3">
@@ -184,6 +197,15 @@ export const LoginForm: React.FC = () => {
                 setShowUserModal(false);
                 setDrawnPattern(null);
                 setStatus("idle");
+              }}
+              onTouchEnd={(e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                if (!isSubmitting) {
+                  setShowUserModal(false);
+                  setDrawnPattern(null);
+                  setStatus("idle");
+                }
               }}
               className="text-xs text-gray-500 hover:text-gray-300 transition-colors py-1"
             >
