@@ -190,7 +190,35 @@ export function setupSocketAuth(io: SocketIOServer) {
         }
 
         if (fullMessage) {
-          // Broadcast to recipient(s) in conversation room
+          // Rolling window: keep only latest 30 messages, delete oldest beyond limit
+          const MESSAGE_LIMIT = 30;
+          const totalCount = await db.message.count({
+            where: { conversationId: "default-private-chat" },
+          });
+
+          if (totalCount > MESSAGE_LIMIT) {
+            const overflow = totalCount - MESSAGE_LIMIT;
+            // Find oldest messages to delete
+            const oldestMessages = await db.message.findMany({
+              where: { conversationId: "default-private-chat" },
+              orderBy: [{ createdAt: "asc" }, { id: "asc" }],
+              take: overflow,
+              select: { id: true },
+            });
+
+            const oldestIds = oldestMessages.map((m) => m.id);
+
+            // Cascade delete: receipts, reactions, attachments, then messages
+            await db.messageReceipt.deleteMany({ where: { messageId: { in: oldestIds } } });
+            await db.reaction.deleteMany({ where: { messageId: { in: oldestIds } } });
+            await db.attachment.deleteMany({ where: { messageId: { in: oldestIds } } });
+            await db.message.deleteMany({ where: { id: { in: oldestIds } } });
+
+            // Notify all clients to remove old messages from UI
+            io.to("default-private-chat").emit("messages:deleted", oldestIds);
+          }
+
+          // Broadcast new message to recipient(s) in conversation room
           socket.to("default-private-chat").emit("message:new", fullMessage);
 
           // Return ACK to sender socket

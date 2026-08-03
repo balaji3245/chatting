@@ -138,6 +138,11 @@ export const ChatAppClient: React.FC<ChatAppClientProps> = ({
       setMessages((prev) => prev.map((m) => (m.id === deletedMsg.id ? deletedMsg : m)));
     };
 
+    // Bulk deletion handler for rolling 30-msg window cleanup
+    const handleMessagesDeleted = (deletedIds: string[]) => {
+      setMessages((prev) => prev.filter((m) => !deletedIds.includes(m.id)));
+    };
+
     const handleReactionUpdated = ({ messageId, reactions }: any) => {
       setMessages((prev) =>
         prev.map((m) => (m.id === messageId ? { ...m, reactions } : m))
@@ -162,6 +167,7 @@ export const ChatAppClient: React.FC<ChatAppClientProps> = ({
     socket.on("message:receipt_updated", handleReceiptUpdated);
     socket.on("message:edited", handleMessageEdited);
     socket.on("message:deleted", handleMessageDeleted);
+    socket.on("messages:deleted", handleMessagesDeleted);
     socket.on("reaction:updated", handleReactionUpdated);
     socket.on("user:presence", handlePresence);
     socket.on("typing:state", handleTypingState);
@@ -172,6 +178,7 @@ export const ChatAppClient: React.FC<ChatAppClientProps> = ({
       socket.off("message:receipt_updated", handleReceiptUpdated);
       socket.off("message:edited", handleMessageEdited);
       socket.off("message:deleted", handleMessageDeleted);
+      socket.off("messages:deleted", handleMessagesDeleted);
       socket.off("reaction:updated", handleReactionUpdated);
       socket.off("user:presence", handlePresence);
       socket.off("typing:state", handleTypingState);
