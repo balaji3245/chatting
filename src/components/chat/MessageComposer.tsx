@@ -35,6 +35,7 @@ export const MessageComposer: React.FC<MessageComposerProps> = ({
   const [isUploading, setIsUploading] = useState(false);
 
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const textareaRef = useRef<HTMLTextAreaElement>(null);
   const typingTimerRef = useRef<NodeJS.Timeout | null>(null);
 
   // Sync content when editing a message
@@ -126,11 +127,15 @@ export const MessageComposer: React.FC<MessageComposerProps> = ({
         attachmentFiles: uploadedAttachmentFiles,
       });
 
-      // Clear composer state
+      // Clear composer state and retain textarea focus on mobile keyboards
       setContent("");
       setSelectedFiles([]);
       if (replyingMessage) onCancelReply();
       onTypingStop();
+
+      setTimeout(() => {
+        textareaRef.current?.focus();
+      }, 10);
     } catch (err: any) {
       alert(`Failed to send message: ${err.message}`);
     } finally {
@@ -257,6 +262,7 @@ export const MessageComposer: React.FC<MessageComposerProps> = ({
             {/* Main Text Input Area */}
             <div className="relative flex-1">
               <textarea
+                ref={textareaRef}
                 value={content}
                 onChange={handleInputChange}
                 onKeyDown={handleKeyDown}
@@ -315,6 +321,7 @@ export const MessageComposer: React.FC<MessageComposerProps> = ({
             ) : (
               <button
                 type="button"
+                onMouseDown={(e) => e.preventDefault()}
                 onClick={handleSubmit}
                 disabled={isUploading}
                 className="p-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white shadow-lg shadow-indigo-600/30 transition-all shrink-0 active:scale-95 disabled:opacity-50"
