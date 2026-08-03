@@ -1,0 +1,148 @@
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+enum MessageType {
+  TEXT
+  IMAGE
+  VIDEO
+  AUDIO
+  VOICE
+  DOCUMENT
+}
+
+enum MessageStatus {
+  SENT
+  DELIVERED
+  READ
+}
+
+model User {
+  id           String    @id @default(cuid())
+  username     String    @unique
+  displayName  String
+  passwordHash String
+  avatarUrl    String?
+  lastSeen     DateTime?
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
+
+  sessions     Session[]
+  sentMessages Message[]        @relation("SentMessages")
+  reactions    Reaction[]
+  receipts     MessageReceipt[]
+}
+
+model Session {
+  id        String   @id @default(cuid())
+  userId    String
+  tokenHash String   @unique
+  expiresAt DateTime
+  ipAddress String?
+  userAgent String?
+  createdAt DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([tokenHash, expiresAt])
+  @@index([userId])
+}
+
+model FailedLogin {
+  id          String    @id @default(cuid())
+  ipAddress   String
+  username    String
+  attempts    Int       @default(1)
+  lockedUntil DateTime?
+  lastAttempt DateTime  @default(now())
+
+  @@unique([ipAddress, username])
+  @@index([ipAddress, username])
+}
+
+model Conversation {
+  id        String   @id @default("default-private-chat")
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  messages Message[]
+}
+
+model Message {
+  id              String      @id @default(cuid())
+  conversationId  String      @default("default-private-chat")
+  senderId        String
+  clientMessageId String
+  replyToId       String?
+  type            MessageType @default(TEXT)
+  content         String?     @db.Text
+  isEdited        Boolean     @default(false)
+  isDeleted       Boolean     @default(false)
+  createdAt       DateTime    @default(now())
+  updatedAt       DateTime    @updatedAt
+
+  conversation Conversation @relation(fields: [conversationId], references: [id], onDelete: Cascade)
+  sender       User         @relation("SentMessages", fields: [senderId], references: [id], onDelete: Cascade)
+  replyTo      Message?     @relation("Replies", fields: [replyToId], references: [id], onDelete: SetNull)
+  replies      Message[]    @relation("Replies")
+
+  attachments Attachment[]
+  reactions   Reaction[]
+  receipts    MessageReceipt[]
+
+  @@unique([senderId, clientMessageId])
+  @@index([conversationId, createdAt(sort: Desc), id(sort: Desc)])
+  @@index([conversationId, isDeleted])
+  @@index([senderId])
+}
+
+model Attachment {
+  id           String      @id @default(cuid())
+  messageId    String
+  filename     String
+  originalName String
+  mimeType     String
+  size         Int
+  category     MessageType
+  path         String
+  duration     Int?
+  createdAt    DateTime    @default(now())
+
+  message Message @relation(fields: [messageId], references: [id], onDelete: Cascade)
+
+  @@index([messageId])
+}
+
+model Reaction {
+  id        String   @id @default(cuid())
+  messageId String
+  userId    String
+  emoji     String
+  createdAt DateTime @default(now())
+
+  message Message @relation(fields: [messageId], references: [id], onDelete: Cascade)
+  user    User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([messageId, userId, emoji])
+  @@index([messageId])
+}
+
+model MessageReceipt {
+  id        String        @id @default(cuid())
+  messageId String
+  userId    String
+  status    MessageStatus @default(SENT)
+  updatedAt DateTime      @updatedAt
+
+  message Message @relation(fields: [messageId], references: [id], onDelete: Cascade)
+  user    User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([messageId, userId])
+  @@index([userId, status])
+  @@index([messageId])
+}
