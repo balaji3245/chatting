@@ -143,6 +143,11 @@ export const ChatAppClient: React.FC<ChatAppClientProps> = ({
       setMessages((prev) => prev.filter((m) => !deletedIds.includes(m.id)));
     };
 
+    // Clear all chat messages from UI (triggered by chat:clear from either user)
+    const handleChatCleared = () => {
+      setMessages([]);
+    };
+
     const handleReactionUpdated = ({ messageId, reactions }: any) => {
       setMessages((prev) =>
         prev.map((m) => (m.id === messageId ? { ...m, reactions } : m))
@@ -168,6 +173,7 @@ export const ChatAppClient: React.FC<ChatAppClientProps> = ({
     socket.on("message:edited", handleMessageEdited);
     socket.on("message:deleted", handleMessageDeleted);
     socket.on("messages:deleted", handleMessagesDeleted);
+    socket.on("chat:cleared", handleChatCleared);
     socket.on("reaction:updated", handleReactionUpdated);
     socket.on("user:presence", handlePresence);
     socket.on("typing:state", handleTypingState);
@@ -179,6 +185,7 @@ export const ChatAppClient: React.FC<ChatAppClientProps> = ({
       socket.off("message:edited", handleMessageEdited);
       socket.off("message:deleted", handleMessageDeleted);
       socket.off("messages:deleted", handleMessagesDeleted);
+      socket.off("chat:cleared", handleChatCleared);
       socket.off("reaction:updated", handleReactionUpdated);
       socket.off("user:presence", handlePresence);
       socket.off("typing:state", handleTypingState);
@@ -321,6 +328,11 @@ export const ChatAppClient: React.FC<ChatAppClientProps> = ({
     }
   };
 
+  const handleClearChat = () => {
+    const socket = getSocket();
+    socket.emit("chat:clear");
+  };
+
   return (
     <div className="flex flex-col h-screen max-h-screen bg-[#0b0f19] text-gray-100 overflow-hidden font-sans">
       {/* Header */}
@@ -330,6 +342,7 @@ export const ChatAppClient: React.FC<ChatAppClientProps> = ({
         currentUser={currentUser}
         onOpenSearch={() => setSearchModalOpen(true)}
         onLogout={handleLogout}
+        onClearChat={handleClearChat}
       />
 
       {/* Main Messages Thread */}

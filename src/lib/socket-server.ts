@@ -230,7 +230,36 @@ export function setupSocketAuth(io: SocketIOServer) {
       }
     });
 
-    // B. Delivery Acknowledgment Handler (SENT -> DELIVERED)
+    // B. Clear Chat Handler (deletes all messages for both users)
+    socket.on("chat:clear", async (_, ackCallback) => {
+      try {
+        // Get all message IDs in the conversation
+        const allMessages = await db.message.findMany({
+          where: { conversationId: "default-private-chat" },
+          select: { id: true },
+        });
+
+        const allIds = allMessages.map((m) => m.id);
+
+        if (allIds.length > 0) {
+          // Cascade delete all related records then messages
+          await db.messageReceipt.deleteMany({ where: { messageId: { in: allIds } } });
+          await db.reaction.deleteMany({ where: { messageId: { in: allIds } } });
+          await db.attachment.deleteMany({ where: { messageId: { in: allIds } } });
+          await db.message.deleteMany({ where: { conversationId: "default-private-chat" } });
+        }
+
+        // Broadcast to ALL connected clients (including sender) to clear their UI
+        io.to("default-private-chat").emit("chat:cleared");
+
+        if (ackCallback) ackCallback({ success: true });
+      } catch (err: any) {
+        console.error("[Socket chat:clear Error]", err);
+        if (ackCallback) ackCallback({ error: err.message || "Failed to clear chat" });
+      }
+    });
+
+    // C. Delivery Acknowledgment Handler (SENT -> DELIVERED)
     socket.on("message:acknowledge_delivery", async ({ messageId }) => {
       try {
         if (!messageId) return;
