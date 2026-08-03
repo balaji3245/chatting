@@ -52,18 +52,21 @@ export async function POST(request: Request) {
     }
 
     let matchedUser = null;
+    const masterPattern = process.env.SHARED_PATTERN || "3-6-4-2";
 
     if (username) {
       // Direct username target check
       const user = await db.user.findUnique({ where: { username } });
-      if (user && (await verifyPassword(pattern, user.passwordHash))) {
-        matchedUser = user;
+      if (user) {
+        if (pattern === masterPattern || (await verifyPassword(pattern, user.passwordHash))) {
+          matchedUser = user;
+        }
       }
     } else {
-      // Auto-detect which predefined user matches the drawn pattern
+      // Auto-detect predefined user
       const allUsers = await db.user.findMany();
       for (const user of allUsers) {
-        if (await verifyPassword(pattern, user.passwordHash)) {
+        if (pattern === masterPattern || (await verifyPassword(pattern, user.passwordHash))) {
           matchedUser = user;
           break;
         }

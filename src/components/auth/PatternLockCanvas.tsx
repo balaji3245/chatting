@@ -183,25 +183,14 @@ export const PatternLockCanvas: React.FC<PatternLockCanvasProps> = ({
       <div
         ref={containerRef}
         style={{ touchAction: "none", userSelect: "none" }}
-        className={`relative w-[280px] h-[280px] bg-white/95 backdrop-blur-md rounded-3xl border border-slate-200 shadow-xl p-2 cursor-pointer transition-all ${
-          status === "error"
-            ? "animate-shake border-rose-500/50 shadow-rose-100"
-            : status === "success"
-            ? "border-emerald-500/50 shadow-emerald-100"
-            : ""
+        className={`relative w-[280px] h-[280px] cursor-pointer transition-all ${
+          status === "error" ? "animate-shake" : ""
         }`}
       >
         <svg
           className="w-full h-full overflow-visible"
           style={{ pointerEvents: "none" }}
         >
-          <defs>
-            <filter id="glow" x="-20%" y="-20%" width="140%" height="140%">
-              <feGaussianBlur stdDeviation="4" result="blur" />
-              <feComposite in="SourceGraphic" in2="blur" operator="over" />
-            </filter>
-          </defs>
-
           {activeNodes.length > 1 && (
             <polyline
               points={activeNodes
@@ -212,7 +201,6 @@ export const PatternLockCanvas: React.FC<PatternLockCanvasProps> = ({
               strokeWidth="5"
               strokeLinecap="round"
               strokeLinejoin="round"
-              filter="url(#glow)"
             />
           )}
 
@@ -232,14 +220,13 @@ export const PatternLockCanvas: React.FC<PatternLockCanvasProps> = ({
 
           {NODES.map((node) => {
             const isActive = activeNodes.includes(node.id);
-            const isLast = activeNodes[activeNodes.length - 1] === node.id;
 
             return (
               <g key={node.id}>
                 <circle
                   cx={node.x}
                   cy={node.y}
-                  r={isActive ? 22 : 16}
+                  r={isActive ? 20 : 16}
                   fill={
                     isActive ? colors.glow : "rgba(241, 245, 249, 0.9)"
                   }
@@ -252,17 +239,6 @@ export const PatternLockCanvas: React.FC<PatternLockCanvasProps> = ({
                   r={isActive ? 8 : 5}
                   fill={isActive ? colors.dotFill : "#64748b"}
                 />
-                {isActive && isLast && isDrawing && (
-                  <circle
-                    cx={node.x}
-                    cy={node.y}
-                    r={26}
-                    fill="none"
-                    stroke={colors.line}
-                    strokeWidth="1.5"
-                    className="animate-ping opacity-75"
-                  />
-                )}
               </g>
             );
           })}

@@ -5,6 +5,7 @@ import { ChatUser } from "@/types/chat";
 interface ChatHeaderProps {
   peerUser: ChatUser | null;
   isPeerOnline: boolean;
+  isConnected: boolean;
   currentUser: { displayName: string; username: string; avatarUrl?: string | null };
   onOpenSearch: () => void;
   onLogout: () => void;
@@ -14,6 +15,7 @@ interface ChatHeaderProps {
 export const ChatHeader: React.FC<ChatHeaderProps> = ({
   peerUser,
   isPeerOnline,
+  isConnected,
   currentUser,
   onOpenSearch,
   onLogout,
@@ -35,7 +37,7 @@ export const ChatHeader: React.FC<ChatHeaderProps> = ({
 
   return (
     <>
-      <header className="h-16 px-4 md:px-6 bg-white border-b border-slate-200/90 shadow-sm flex items-center justify-between sticky top-0 z-30">
+      <header className="h-16 px-4 md:px-6 bg-white border-b border-slate-200/90 shadow-sm flex items-center justify-between z-30">
         {/* Peer Profile Summary */}
         <div className="flex items-center gap-3">
           {peerUser ? (
@@ -51,8 +53,13 @@ export const ChatHeader: React.FC<ChatHeaderProps> = ({
                   {peerUser.displayName}
                   <span className="text-xs text-slate-400 font-normal">@{peerUser.username}</span>
                 </h1>
-                <p className="text-xs text-emerald-600 font-medium">
-                  {isPeerOnline ? (
+                <p className="text-xs font-medium">
+                  {!isConnected ? (
+                    <span className="flex items-center gap-1.5 text-amber-500 animate-pulse">
+                      <span className="w-1.5 h-1.5 rounded-full bg-amber-400" />
+                      Connecting...
+                    </span>
+                  ) : isPeerOnline ? (
                     <span className="flex items-center gap-1.5 text-emerald-600">
                       <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
                       Online

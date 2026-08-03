@@ -10,6 +10,7 @@ export const LoginForm: React.FC = () => {
   const [status, setStatus] = useState<"idle" | "error" | "success">("idle");
   const [errorMessage, setErrorMessage] = useState<string>("");
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
+  const [isVerifying, setIsVerifying] = useState<boolean>(false);
 
   // Modal state for user selection post-pattern entry
   const [drawnPattern, setDrawnPattern] = useState<string | null>(null);
@@ -17,12 +18,40 @@ export const LoginForm: React.FC = () => {
   const [authenticatingUser, setAuthenticatingUser] = useState<"t" | "adesh" | null>(null);
 
   // Triggered when 9-dot pattern drawing completes
-  const handlePatternComplete = (patternNodes: number[]) => {
+  const handlePatternComplete = async (patternNodes: number[]) => {
     const patternStr = patternNodes.join("-");
-    setDrawnPattern(patternStr);
     setStatus("idle");
     setErrorMessage("");
-    setShowUserModal(true);
+    setIsVerifying(true);
+
+    try {
+      // Instantly verify if pattern is correct before asking to select profile
+      const res = await fetch("/api/auth/verify-pattern", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ pattern: patternStr }),
+      });
+
+      const data = await res.json();
+
+      if (!res.ok || !data.valid) {
+        setStatus("error");
+        setErrorMessage(data.error || "Invalid pattern lock. Please try again.");
+        setDrawnPattern(null);
+        return;
+      }
+
+      // Pattern is 100% correct! Open Select Profile modal
+      setStatus("success");
+      setDrawnPattern(patternStr);
+      setShowUserModal(true);
+    } catch (err: any) {
+      setStatus("error");
+      setErrorMessage("Network error. Please try again.");
+      setDrawnPattern(null);
+    } finally {
+      setIsVerifying(false);
+    }
   };
 
   // Called when user selects T or Adesh from the modal popup
@@ -71,8 +100,8 @@ export const LoginForm: React.FC = () => {
 
   return (
     <>
-      {/* Main Pattern Lock Card */}
-      <div className="w-full max-w-md p-6 sm:p-8 rounded-3xl bg-white border border-slate-200/90 shadow-xl space-y-6 flex flex-col items-center relative">
+      {/* Main Pattern Lock Wrapper (Clean without box borders) */}
+      <div className="w-full max-w-md p-4 space-y-6 flex flex-col items-center relative">
         {/* Title */}
         <div className="text-center space-y-1">
           <h2 className="text-xl font-bold text-slate-900 tracking-tight flex items-center justify-center gap-2">
@@ -96,8 +125,16 @@ export const LoginForm: React.FC = () => {
           }}
         />
 
+        {/* Verifying / Loading Indicator */}
+        {isVerifying && (
+          <div className="flex items-center gap-2 text-xs text-indigo-600 font-medium animate-in fade-in">
+            <div className="w-4 h-4 border-2 border-indigo-600 border-t-transparent rounded-full animate-spin" />
+            Verifying pattern...
+          </div>
+        )}
+
         {/* Error Message Display */}
-        {errorMessage && (
+        {errorMessage && !isVerifying && (
           <div className="p-3 rounded-xl bg-rose-50 border border-rose-200 text-rose-600 text-xs text-center w-full animate-in fade-in">
             {errorMessage}
           </div>

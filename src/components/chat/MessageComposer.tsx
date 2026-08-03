@@ -181,7 +181,7 @@ export const MessageComposer: React.FC<MessageComposerProps> = ({
   const EMOJIS = ["😊", "😂", "❤️", "👍", "🔥", "🎉", "🙌", "🙏", "😍", "✨"];
 
   return (
-    <div className="p-3 md:p-4 bg-white border-t border-slate-200/90 shadow-sm sticky bottom-0 z-30">
+    <div className="p-3 md:p-4">
       {/* Voice Recorder Overlay Mode */}
       {isRecordingVoice ? (
         <VoiceRecorder
@@ -234,7 +234,7 @@ export const MessageComposer: React.FC<MessageComposerProps> = ({
           )}
 
           {/* Input Control Row */}
-          <div className="flex items-end gap-2">
+          <div className="flex items-center gap-2">
             {/* Attachment File Trigger */}
             <input
               type="file"
@@ -270,36 +270,7 @@ export const MessageComposer: React.FC<MessageComposerProps> = ({
                 rows={1}
                 className="w-full bg-slate-100 border border-slate-200 focus:bg-white focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20 rounded-2xl px-4 py-2.5 text-sm text-slate-900 placeholder-slate-400 resize-none focus:outline-none max-h-32 transition-all"
               />
-
-              {/* Emoji Picker Popup */}
-              {showEmojiPicker && (
-                <div className="absolute bottom-full mb-2 left-0 flex items-center gap-2 p-2 rounded-2xl bg-white border border-slate-200 shadow-xl z-40">
-                  {EMOJIS.map((e) => (
-                    <button
-                      key={e}
-                      type="button"
-                      onClick={() => {
-                        setContent((prev) => prev + e);
-                        setShowEmojiPicker(false);
-                      }}
-                      className="p-1 hover:scale-125 transition-transform"
-                    >
-                      {e}
-                    </button>
-                  ))}
-                </div>
-              )}
             </div>
-
-            {/* Quick Emoji Trigger */}
-            <button
-              type="button"
-              onClick={() => setShowEmojiPicker(!showEmojiPicker)}
-              className="p-2.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-500 hover:text-amber-500 transition-colors shrink-0"
-              title="Emoji"
-            >
-              😊
-            </button>
 
             {/* Voice Recorder or Send Trigger */}
             {!content.trim() && selectedFiles.length === 0 && !editingMessage ? (

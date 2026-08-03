@@ -38,6 +38,7 @@ export const ChatAppClient: React.FC<ChatAppClientProps> = ({
 
   const [searchModalOpen, setSearchModalOpen] = useState<boolean>(false);
   const [mediaPreview, setMediaPreview] = useState<{ url: string; category: MessageType } | null>(null);
+  const [isConnected, setIsConnected] = useState<boolean>(false);
 
   const lastReceivedCursorRef = useRef<{ createdAt: string; id: string } | null>(null);
 
@@ -65,8 +66,8 @@ export const ChatAppClient: React.FC<ChatAppClientProps> = ({
   useEffect(() => {
     const socket = connectSocket();
 
-    const handleConnect = () => {
-      // Perform cursor reconnection sync if we already have messages
+    const doSync = () => {
+      if (!socket.connected) return;
       if (lastReceivedCursorRef.current) {
         socket.emit(
           "message:sync",
@@ -85,6 +86,31 @@ export const ChatAppClient: React.FC<ChatAppClientProps> = ({
           }
         );
       }
+    };
+
+    const handleConnect = () => {
+      setIsConnected(true);
+      doSync();
+    };
+
+    // Force logout on any disconnect — security: any offline moment requires re-login
+    const forceLogout = async () => {
+      try {
+        await fetch("/api/auth/logout", { method: "POST" });
+      } catch (_) {
+        // Best-effort logout even if network is down
+      }
+      router.push("/login");
+    };
+
+    const handleDisconnect = () => {
+      setIsConnected(false);
+      forceLogout();
+    };
+
+    const handleConnectError = () => {
+      setIsConnected(false);
+      forceLogout();
     };
 
     const handleNewMessage = (newMsg: any) => {
@@ -168,6 +194,8 @@ export const ChatAppClient: React.FC<ChatAppClientProps> = ({
     };
 
     socket.on("connect", handleConnect);
+    socket.on("disconnect", handleDisconnect);
+    socket.on("connect_error", handleConnectError);
     socket.on("message:new", handleNewMessage);
     socket.on("message:receipt_updated", handleReceiptUpdated);
     socket.on("message:edited", handleMessageEdited);
@@ -178,8 +206,28 @@ export const ChatAppClient: React.FC<ChatAppClientProps> = ({
     socket.on("user:presence", handlePresence);
     socket.on("typing:state", handleTypingState);
 
+    // Force logout when user leaves the tab/browser (even for 1 second)
+    const handleVisibilityChange = () => {
+      if (document.visibilityState === "hidden") {
+        forceLogout();
+      }
+    };
+
+    // Force logout on network offline
+    const handleOffline = () => {
+      forceLogout();
+    };
+
+    document.addEventListener("visibilitychange", handleVisibilityChange);
+    window.addEventListener("offline", handleOffline);
+
+    // Set initial connection state
+    setIsConnected(socket.connected);
+
     return () => {
       socket.off("connect", handleConnect);
+      socket.off("disconnect", handleDisconnect);
+      socket.off("connect_error", handleConnectError);
       socket.off("message:new", handleNewMessage);
       socket.off("message:receipt_updated", handleReceiptUpdated);
       socket.off("message:edited", handleMessageEdited);
@@ -189,6 +237,8 @@ export const ChatAppClient: React.FC<ChatAppClientProps> = ({
       socket.off("reaction:updated", handleReactionUpdated);
       socket.off("user:presence", handlePresence);
       socket.off("typing:state", handleTypingState);
+      document.removeEventListener("visibilitychange", handleVisibilityChange);
+      window.removeEventListener("offline", handleOffline);
     };
   }, [currentUser.id, peerUser]);
 
@@ -338,44 +388,54 @@ export const ChatAppClient: React.FC<ChatAppClientProps> = ({
   };
 
   return (
-    <div className="flex flex-col h-screen max-h-screen bg-[#f0f2f5] text-slate-900 overflow-hidden font-sans">
-      {/* Header */}
-      <ChatHeader
-        peerUser={peerUser}
-        isPeerOnline={isPeerOnline}
-        currentUser={currentUser}
-        onOpenSearch={() => setSearchModalOpen(true)}
-        onLogout={handleLogout}
-        onClearChat={handleClearChat}
-      />
+    <div
+      className="flex flex-col bg-[#f0f2f5] text-slate-900 font-sans"
+      style={{ position: "fixed", inset: 0, overflow: "hidden" }}
+    >
+      {/* Header - always fixed at top, never scrolls */}
+      <div className="flex-shrink-0">
+        <ChatHeader
+          peerUser={peerUser}
+          isPeerOnline={isPeerOnline}
+          currentUser={currentUser}
+          onOpenSearch={() => setSearchModalOpen(true)}
+          onLogout={handleLogout}
+          onClearChat={handleClearChat}
+          isConnected={isConnected}
+        />
+      </div>
 
-      {/* Main Messages Thread */}
-      <MessageList
-        messages={messages}
-        currentUserId={currentUser.id}
-        peerUser={peerUser}
-        isPeerTyping={isPeerTyping}
-        hasMore={Boolean(nextCursor)}
-        isLoadingMore={isLoadingMore}
-        onLoadMore={handleLoadMore}
-        onReply={(msg) => setReplyingMessage(msg)}
-        onEdit={(msg) => setEditingMessage(msg)}
-        onDelete={handleDeleteMessage}
-        onToggleReaction={handleToggleReaction}
-        onOpenMedia={(url, cat) => setMediaPreview({ url, category: cat })}
-      />
+      {/* Main Messages Thread - fills remaining height, scrolls internally */}
+      <div className="flex-1 min-h-0">
+        <MessageList
+          messages={messages}
+          currentUserId={currentUser.id}
+          peerUser={peerUser}
+          isPeerTyping={isPeerTyping}
+          hasMore={Boolean(nextCursor)}
+          isLoadingMore={isLoadingMore}
+          onLoadMore={handleLoadMore}
+          onReply={(msg) => setReplyingMessage(msg)}
+          onEdit={(msg) => setEditingMessage(msg)}
+          onDelete={handleDeleteMessage}
+          onToggleReaction={handleToggleReaction}
+          onOpenMedia={(url, cat) => setMediaPreview({ url, category: cat })}
+        />
+      </div>
 
-      {/* Input Composer */}
-      <MessageComposer
-        onSendMessage={handleSendMessage}
-        replyingMessage={replyingMessage}
-        onCancelReply={() => setReplyingMessage(null)}
-        editingMessage={editingMessage}
-        onCancelEdit={() => setEditingMessage(null)}
-        onSaveEdit={handleSaveEdit}
-        onTypingStart={handleTypingStart}
-        onTypingStop={handleTypingStop}
-      />
+      {/* Input Composer - always fixed at bottom, never scrolls */}
+      <div className="flex-shrink-0">
+        <MessageComposer
+          onSendMessage={handleSendMessage}
+          replyingMessage={replyingMessage}
+          onCancelReply={() => setReplyingMessage(null)}
+          editingMessage={editingMessage}
+          onCancelEdit={() => setEditingMessage(null)}
+          onSaveEdit={handleSaveEdit}
+          onTypingStart={handleTypingStart}
+          onTypingStop={handleTypingStop}
+        />
+      </div>
 
       {/* Search Modal */}
       <SearchModal

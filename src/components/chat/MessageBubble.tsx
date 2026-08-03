@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useRef } from "react";
 import { MessageStatus, MessageType } from "@prisma/client";
 import { Avatar } from "@/components/ui/Avatar";
 import { MessageStatusRank } from "@/types/chat";
@@ -56,6 +56,30 @@ export const MessageBubble: React.FC<MessageBubbleProps> = ({
 }) => {
   const [showActions, setShowActions] = useState(false);
   const [showEmojiPicker, setShowEmojiPicker] = useState(false);
+  const longPressTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  // Long press handler for mobile action bar trigger
+  const handleTouchStart = () => {
+    if (message.isDeleted) return;
+    longPressTimer.current = setTimeout(() => {
+      setShowActions(true);
+    }, 500);
+  };
+
+  const handleTouchEnd = () => {
+    if (longPressTimer.current) {
+      clearTimeout(longPressTimer.current);
+      longPressTimer.current = null;
+    }
+  };
+
+  const handleTouchMove = () => {
+    // Cancel long press if finger moves (scrolling)
+    if (longPressTimer.current) {
+      clearTimeout(longPressTimer.current);
+      longPressTimer.current = null;
+    }
+  };
 
   const isMine = message.senderId === currentUserId;
   const createdAtDate = new Date(message.createdAt);
@@ -137,6 +161,9 @@ export const MessageBubble: React.FC<MessageBubbleProps> = ({
         setShowActions(false);
         setShowEmojiPicker(false);
       }}
+      onTouchStart={handleTouchStart}
+      onTouchEnd={handleTouchEnd}
+      onTouchMove={handleTouchMove}
     >
       {!isMine && <Avatar name={message.sender.displayName} url={message.sender.avatarUrl} size="sm" />}
 
