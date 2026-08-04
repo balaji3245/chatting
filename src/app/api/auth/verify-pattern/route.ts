@@ -28,26 +28,11 @@ export async function POST(request: Request) {
       );
     }
 
-    const ipAddress = getClientIp(request);
-
-    // Rate limiting check
-    const lockout = await checkBruteForceLockout(ipAddress, "pattern-verify");
-    if (lockout.isLocked) {
-      return NextResponse.json(
-        {
-          valid: false,
-          error: `Too many failed attempts. Try again in ${lockout.remainingSeconds} seconds.`,
-        },
-        { status: 429 }
-      );
-    }
-
-    // Fast master pattern comparison only — no bcrypt, instant < 1ms
+    // Fast master pattern comparison only — no rate limiting lockout
     const masterPattern = process.env.SHARED_PATTERN || "3-6-4-2";
     const isValid = pattern === masterPattern;
 
     if (!isValid) {
-      await recordFailedLogin(ipAddress, "pattern-verify");
       return NextResponse.json(
         { valid: false, error: "Invalid pattern lock. Please try again." },
         { status: 401 }

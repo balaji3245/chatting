@@ -37,20 +37,6 @@ export async function POST(request: Request) {
       );
     }
 
-    const ipAddress = getClientIp(request);
-    const targetUsername = username || "pattern-attempt";
-
-    // Rate limiting check
-    const lockout = await checkBruteForceLockout(ipAddress, targetUsername);
-    if (lockout.isLocked) {
-      return NextResponse.json(
-        {
-          error: `Too many failed pattern attempts. Please try again in ${lockout.remainingSeconds} seconds.`,
-        },
-        { status: 429 }
-      );
-    }
-
     let matchedUser = null;
     const masterPattern = process.env.SHARED_PATTERN || "3-6-4-2";
 
@@ -74,17 +60,14 @@ export async function POST(request: Request) {
     }
 
     if (!matchedUser) {
-      await recordFailedLogin(ipAddress, targetUsername);
       return NextResponse.json(
         { error: "Invalid pattern lock. Please try again." },
         { status: 401 }
       );
     }
 
-    // Clear failed logins on success
-    await clearFailedLogin(ipAddress, matchedUser.username);
-
     // Create session token
+    const ipAddress = getClientIp(request);
     const userAgent = request.headers.get("user-agent") ?? undefined;
     const { rawToken, expiresAt } = await createSession(matchedUser.id, {
       ipAddress,
