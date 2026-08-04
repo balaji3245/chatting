@@ -38,8 +38,15 @@ export const ChatHeader: React.FC<ChatHeaderProps> = ({
   return (
     <>
       <header className="h-16 px-4 md:px-6 bg-white border-b border-slate-200/90 shadow-sm flex items-center justify-between z-30">
-        {/* Peer Profile Summary */}
+        {/* App Logo & Peer Profile Summary */}
         <div className="flex items-center gap-3">
+          <img
+            src="/logo.png"
+            alt="Site Logo"
+            className="w-9 h-9 rounded-xl object-cover border border-slate-200 shadow-xs shrink-0"
+            title="Private Chat"
+          />
+          <div className="h-6 w-px bg-slate-200/80 shrink-0" />
           {peerUser ? (
             <>
               <Avatar
