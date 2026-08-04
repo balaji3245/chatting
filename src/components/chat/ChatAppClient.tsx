@@ -41,6 +41,8 @@ export const ChatAppClient: React.FC<ChatAppClientProps> = ({
   const [isConnected, setIsConnected] = useState<boolean>(false);
 
   const lastReceivedCursorRef = useRef<{ createdAt: string; id: string } | null>(null);
+  // Flag to suppress logout when native file picker is open (visibility goes hidden briefly)
+  const isFilePickerOpenRef = useRef<boolean>(false);
 
   // Keep track of latest message cursor for reconnection sync
   useEffect(() => {
@@ -206,12 +208,22 @@ export const ChatAppClient: React.FC<ChatAppClientProps> = ({
     socket.on("user:presence", handlePresence);
     socket.on("typing:state", handleTypingState);
 
-    // Force logout when user leaves the tab/browser (even for 1 second)
+    // Force logout when user leaves the tab/browser — but NOT when file picker is open
     const handleVisibilityChange = () => {
-      if (document.visibilityState === "hidden") {
+      if (document.visibilityState === "hidden" && !isFilePickerOpenRef.current) {
         forceLogout();
       }
     };
+
+    // File picker open/close events from MessageComposer
+    const handleFilePickerOpen = () => { isFilePickerOpenRef.current = true; };
+    const handleFilePickerClose = () => {
+      // Small delay so visibilitychange fires first, then reset flag
+      setTimeout(() => { isFilePickerOpenRef.current = false; }, 2000);
+    };
+
+    window.addEventListener("filepicker:open", handleFilePickerOpen);
+    window.addEventListener("filepicker:close", handleFilePickerClose);
 
     // Force logout on network offline
     const handleOffline = () => {
@@ -239,6 +251,8 @@ export const ChatAppClient: React.FC<ChatAppClientProps> = ({
       socket.off("typing:state", handleTypingState);
       document.removeEventListener("visibilitychange", handleVisibilityChange);
       window.removeEventListener("offline", handleOffline);
+      window.removeEventListener("filepicker:open", handleFilePickerOpen);
+      window.removeEventListener("filepicker:close", handleFilePickerClose);
     };
   }, [currentUser.id, peerUser]);
 

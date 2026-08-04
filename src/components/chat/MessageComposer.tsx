@@ -239,13 +239,19 @@ export const MessageComposer: React.FC<MessageComposerProps> = ({
             <input
               type="file"
               ref={fileInputRef}
-              onChange={handleFileSelect}
+              onChange={(e) => {
+                window.dispatchEvent(new Event("filepicker:close"));
+                handleFileSelect(e);
+              }}
               className="hidden"
               multiple
             />
             <button
               type="button"
-              onClick={() => fileInputRef.current?.click()}
+              onClick={() => {
+                window.dispatchEvent(new Event("filepicker:open"));
+                fileInputRef.current?.click();
+              }}
               className="p-2.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-500 hover:text-indigo-600 transition-colors shrink-0"
               title="Attach File"
             >
