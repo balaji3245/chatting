@@ -159,7 +159,7 @@ export const MessageList: React.FC<MessageListProps> = ({
       {showScrollBtn && (
         <button
           onClick={scrollToBottom}
-          className="absolute bottom-4 right-4 z-20 flex items-center justify-center w-11 h-11 rounded-full bg-white border border-slate-200 shadow-lg hover:bg-slate-50 transition-all active:scale-95 animate-in fade-in slide-in-from-bottom-2 duration-150"
+          className="absolute bottom-4 left-4 z-20 flex items-center justify-center w-11 h-11 rounded-full bg-white border border-slate-200 shadow-lg hover:bg-slate-50 transition-all active:scale-95 animate-in fade-in slide-in-from-bottom-2 duration-150"
           title="Scroll to bottom"
         >
           {/* Unread Badge */}
