@@ -290,12 +290,13 @@ export const MessageBubble: React.FC<MessageBubbleProps> = ({
             </>
           )}
 
-          {/* Time & Receipt Footer */}
-          <div className={`flex items-center justify-end gap-1 mt-0.5 text-[10px] select-none ${isMine ? "text-purple-100/90" : "text-slate-400"}`}>
-            {message.isEdited && !message.isDeleted && <span>(edited)</span>}
-            <span suppressHydrationWarning>{timeFormatted}</span>
-            {isMine && !message.isDeleted && renderReceiptIcon()}
-          </div>
+          {/* Footer (Edited / Receipt) */}
+          {(message.isEdited || (isMine && !message.isDeleted)) && (
+            <div className={`flex items-center justify-end gap-1 mt-0.5 text-[10px] select-none ${isMine ? "text-purple-100/90" : "text-slate-400"}`}>
+              {message.isEdited && !message.isDeleted && <span>(edited)</span>}
+              {isMine && !message.isDeleted && renderReceiptIcon()}
+            </div>
+          )}
         </div>
 
         {/* Reaction Badges */}
