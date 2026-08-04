@@ -35,30 +35,7 @@ export const ChatHeader: React.FC<ChatHeaderProps> = ({
     onClearChat();
   };
 
-  const handleEmergencyExit = async () => {
-    try {
-      await fetch("/api/auth/logout", { method: "POST" });
-    } catch (_) {}
-    if (typeof window !== "undefined") {
-      try {
-        sessionStorage.clear();
-        localStorage.clear();
-        if ("caches" in window) {
-          const keys = await caches.keys();
-          await Promise.all(keys.map((k) => caches.delete(k)));
-        }
-      } catch (_) {}
 
-      // Overwrite history entries so pressing Back button stays on Google
-      try {
-        window.history.pushState(null, "", "https://www.google.com");
-        window.history.replaceState(null, "", "https://www.google.com");
-      } catch (_) {}
-
-      window.close();
-      window.location.replace("https://www.google.com");
-    }
-  };
 
   return (
     <>
@@ -109,24 +86,7 @@ export const ChatHeader: React.FC<ChatHeaderProps> = ({
         </div>
 
         {/* Quick Action Icons */}
-        <div className="flex items-center gap-1.5">
-          {/* Quick Panic / Emergency Exit Button */}
-          <button
-            onClick={handleEmergencyExit}
-            title="Panic Exit (Instant Leave & Logout)"
-            className="p-2 sm:px-3 sm:py-2 rounded-xl text-rose-600 bg-rose-50 hover:bg-rose-600 hover:text-white border border-rose-200/90 shadow-2xs transition-all active:scale-95 flex items-center justify-center gap-1.5 focus:outline-none"
-          >
-            <svg className="w-4 h-4 sm:w-4 sm:h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2.2}
-                d="M13 10V3L4 14h7v7l9-11h-7z"
-              />
-            </svg>
-            <span className="text-xs font-bold">Exit</span>
-          </button>
-
+        <div className="flex items-center gap-1">
           {/* Clear Chat Button */}
           <button
             onClick={() => setShowConfirm(true)}

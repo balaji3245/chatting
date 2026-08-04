@@ -401,6 +401,31 @@ export const ChatAppClient: React.FC<ChatAppClientProps> = ({
     socket.emit("chat:clear");
   };
 
+  const handleEmergencyExit = async () => {
+    try {
+      await fetch("/api/auth/logout", { method: "POST" });
+    } catch (_) {}
+    if (typeof window !== "undefined") {
+      try {
+        sessionStorage.clear();
+        localStorage.clear();
+        if ("caches" in window) {
+          const keys = await caches.keys();
+          await Promise.all(keys.map((k) => caches.delete(k)));
+        }
+      } catch (_) {}
+
+      // Overwrite history entries so pressing Back button stays on Google
+      try {
+        window.history.pushState(null, "", "https://www.google.com");
+        window.history.replaceState(null, "", "https://www.google.com");
+      } catch (_) {}
+
+      window.close();
+      window.location.replace("https://www.google.com");
+    }
+  };
+
   return (
     <div
       className="flex flex-col bg-white text-slate-900 font-sans"
@@ -436,6 +461,23 @@ export const ChatAppClient: React.FC<ChatAppClientProps> = ({
           onOpenMedia={(url, cat) => setMediaPreview({ url, category: cat })}
         />
       </div>
+
+      {/* Floating Emergency Panic Exit Button */}
+      <button
+        onClick={handleEmergencyExit}
+        title="Panic Exit (Instant Leave & Logout)"
+        className="fixed bottom-[76px] left-3 z-40 px-3 py-1.5 rounded-full bg-rose-600 hover:bg-rose-700 text-white font-bold text-xs shadow-lg border border-rose-500/40 flex items-center gap-1.5 transition-all active:scale-95 animate-in fade-in"
+      >
+        <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            strokeWidth={2.2}
+            d="M13 10V3L4 14h7v7l9-11h-7z"
+          />
+        </svg>
+        <span>Exit</span>
+      </button>
 
       {/* Input Composer - always fixed at bottom, never scrolls */}
       <div className="flex-shrink-0">
