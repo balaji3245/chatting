@@ -252,7 +252,7 @@ export const MessageComposer: React.FC<MessageComposerProps> = ({
                 window.dispatchEvent(new Event("filepicker:open"));
                 fileInputRef.current?.click();
               }}
-              className="p-2.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-500 hover:text-indigo-600 transition-colors shrink-0"
+              className="p-2.5 rounded-full bg-[#efefef] hover:bg-[#e4e4e4] text-slate-600 transition-colors shrink-0"
               title="Attach File"
             >
               <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -272,9 +272,9 @@ export const MessageComposer: React.FC<MessageComposerProps> = ({
                 value={content}
                 onChange={handleInputChange}
                 onKeyDown={handleKeyDown}
-                placeholder="Type a message..."
+                placeholder="Message..."
                 rows={1}
-                className="w-full bg-slate-100 border border-slate-200 focus:bg-white focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20 rounded-2xl px-4 py-2.5 text-sm text-slate-900 placeholder-slate-400 resize-none focus:outline-none max-h-32 transition-all"
+                className="w-full bg-[#efefef] border-none focus:bg-[#e8e8e8] rounded-[24px] px-4 py-2.5 text-sm text-slate-900 placeholder-slate-400 resize-none focus:outline-none max-h-32 transition-all"
               />
             </div>
 
@@ -283,7 +283,7 @@ export const MessageComposer: React.FC<MessageComposerProps> = ({
               <button
                 type="button"
                 onClick={() => setIsRecordingVoice(true)}
-                className="p-2.5 rounded-xl bg-indigo-50 hover:bg-indigo-100 text-indigo-600 transition-colors shrink-0 border border-indigo-200"
+                className="p-2.5 rounded-full bg-[#efefef] hover:bg-[#e4e4e4] text-slate-700 transition-colors shrink-0"
                 title="Voice Note"
               >
                 <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -301,7 +301,7 @@ export const MessageComposer: React.FC<MessageComposerProps> = ({
                 onMouseDown={(e) => e.preventDefault()}
                 onClick={handleSubmit}
                 disabled={isUploading}
-                className="p-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white shadow-md shadow-indigo-600/20 transition-all shrink-0 active:scale-95 disabled:opacity-50"
+                className="p-2.5 rounded-full bg-gradient-to-tr from-[#7000ff] via-[#a000ff] to-[#0095f6] hover:opacity-95 text-white shadow-xs transition-all shrink-0 active:scale-95 disabled:opacity-50"
                 title="Send Message"
               >
                 {isUploading ? (

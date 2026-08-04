@@ -153,7 +153,7 @@ export const MessageBubble: React.FC<MessageBubbleProps> = ({
 
   return (
     <div
-      className={`group relative flex items-start gap-2.5 my-2 ${
+      className={`group relative flex items-end gap-2 my-1 ${
         isMine ? "flex-row-reverse" : "flex-row"
       }`}
       onMouseEnter={() => setShowActions(true)}
@@ -167,20 +167,20 @@ export const MessageBubble: React.FC<MessageBubbleProps> = ({
     >
       {!isMine && <Avatar name={message.sender.displayName} url={message.sender.avatarUrl} size="sm" />}
 
-      <div className={`relative max-w-[85%] sm:max-w-[70%] flex flex-col ${isMine ? "items-end" : "items-start"}`}>
+      <div className={`relative max-w-[80%] sm:max-w-[70%] flex flex-col ${isMine ? "items-end" : "items-start"}`}>
         {/* Reply Preview Header */}
         {message.replyTo && (
           <div
-            className={`mb-1 p-2 rounded-xl text-xs border-l-3 ${
+            className={`mb-1 px-3 py-1.5 rounded-2xl text-xs border-l-3 ${
               isMine
-                ? "bg-indigo-700/40 border-white text-white"
-                : "bg-slate-100 border-indigo-500 text-slate-700"
-            } w-full truncate cursor-pointer shadow-xs`}
+                ? "bg-purple-800/40 border-white text-white"
+                : "bg-slate-200/80 border-purple-600 text-slate-800"
+            } w-full truncate cursor-pointer shadow-2xs`}
           >
             <span className="font-semibold block text-[11px] opacity-90">
               Replying to {message.replyTo.sender?.displayName || "User"}
             </span>
-            <span className="italic opacity-80">
+            <span className="italic opacity-80 truncate block">
               {message.replyTo.isDeleted
                 ? "Deleted message"
                 : message.replyTo.content || `[${message.replyTo.type}]`}
@@ -188,12 +188,12 @@ export const MessageBubble: React.FC<MessageBubbleProps> = ({
           </div>
         )}
 
-        {/* Message Bubble Container */}
+        {/* Message Bubble Container (Instagram DM Pill) */}
         <div
-          className={`relative rounded-2xl px-4 py-2.5 shadow-sm ${
+          className={`relative rounded-[22px] px-3.5 py-2 shadow-2xs ${
             isMine
-              ? "bg-indigo-600 text-white rounded-tr-xs"
-              : "bg-white border border-slate-200/90 text-slate-800 rounded-tl-xs"
+              ? "bg-gradient-to-tr from-[#7000ff] via-[#a000ff] to-[#0095f6] text-white rounded-br-[4px]"
+              : "bg-[#efefef] text-slate-900 rounded-bl-[4px]"
           }`}
         >
           {/* Soft Deleted Message View */}
@@ -213,7 +213,7 @@ export const MessageBubble: React.FC<MessageBubbleProps> = ({
             <>
               {/* Attachments rendering */}
               {message.attachments && message.attachments.length > 0 && (
-                <div className="space-y-2 mb-2">
+                <div className="space-y-2 mb-1.5">
                   {message.attachments.map((att) => {
                     const mediaUrl = `/api/media/${att.path}`;
                     if (att.category === "IMAGE") {
@@ -221,7 +221,7 @@ export const MessageBubble: React.FC<MessageBubbleProps> = ({
                         <div
                           key={att.id}
                           onClick={() => onOpenMedia(mediaUrl, "IMAGE")}
-                          className="relative rounded-xl overflow-hidden cursor-pointer max-w-xs group/img border border-black/5"
+                          className="relative rounded-2xl overflow-hidden cursor-pointer max-w-xs group/img border border-black/5"
                         >
                           <img
                             src={mediaUrl}
@@ -233,15 +233,15 @@ export const MessageBubble: React.FC<MessageBubbleProps> = ({
                     }
                     if (att.category === "VIDEO") {
                       return (
-                        <div key={att.id} className="max-w-xs rounded-xl overflow-hidden border border-black/5">
-                          <video src={mediaUrl} controls className="w-full max-h-60 rounded-xl" />
+                        <div key={att.id} className="max-w-xs rounded-2xl overflow-hidden border border-black/5">
+                          <video src={mediaUrl} controls className="w-full max-h-60 rounded-2xl" />
                         </div>
                       );
                     }
                     if (att.category === "AUDIO" || att.category === "VOICE") {
                       return (
                         <div key={att.id} className="py-1">
-                          <audio src={mediaUrl} controls className="max-w-xs h-10 rounded-lg" />
+                          <audio src={mediaUrl} controls className="max-w-xs h-10 rounded-xl" />
                         </div>
                       );
                     }
@@ -253,14 +253,14 @@ export const MessageBubble: React.FC<MessageBubbleProps> = ({
                         download={att.originalName}
                         target="_blank"
                         rel="noreferrer"
-                        className={`flex items-center gap-3 p-2.5 rounded-xl border text-xs transition-colors ${
+                        className={`flex items-center gap-3 p-2 rounded-xl border text-xs transition-colors ${
                           isMine
-                            ? "bg-indigo-700/50 border-indigo-500/50 hover:bg-indigo-700 text-white"
-                            : "bg-slate-50 border-slate-200 hover:bg-slate-100 text-slate-800"
+                            ? "bg-white/20 border-white/30 hover:bg-white/30 text-white"
+                            : "bg-slate-200/60 border-slate-300 hover:bg-slate-200 text-slate-800"
                         }`}
                       >
-                        <div className={`p-2 rounded-lg ${isMine ? "bg-white/20 text-white" : "bg-indigo-50 text-indigo-600"}`}>
-                          <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <div className={`p-2 rounded-lg ${isMine ? "bg-white/20 text-white" : "bg-purple-100 text-purple-600"}`}>
+                          <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                             <path
                               strokeLinecap="round"
                               strokeLinejoin="round"
@@ -271,7 +271,7 @@ export const MessageBubble: React.FC<MessageBubbleProps> = ({
                         </div>
                         <div className="overflow-hidden">
                           <p className="font-medium truncate">{att.originalName}</p>
-                          <p className={`text-[10px] ${isMine ? "text-indigo-200" : "text-slate-400"}`}>
+                          <p className={`text-[10px] ${isMine ? "text-purple-100" : "text-slate-500"}`}>
                             {(att.size / 1024).toFixed(1)} KB
                           </p>
                         </div>
@@ -291,7 +291,7 @@ export const MessageBubble: React.FC<MessageBubbleProps> = ({
           )}
 
           {/* Time & Receipt Footer */}
-          <div className={`flex items-center justify-end gap-1.5 mt-1 text-[10px] select-none ${isMine ? "text-indigo-100" : "text-slate-400"}`}>
+          <div className={`flex items-center justify-end gap-1 mt-0.5 text-[10px] select-none ${isMine ? "text-purple-100/90" : "text-slate-400"}`}>
             {message.isEdited && !message.isDeleted && <span>(edited)</span>}
             <span suppressHydrationWarning>{timeFormatted}</span>
             {isMine && !message.isDeleted && renderReceiptIcon()}

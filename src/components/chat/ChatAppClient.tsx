@@ -403,7 +403,7 @@ export const ChatAppClient: React.FC<ChatAppClientProps> = ({
 
   return (
     <div
-      className="flex flex-col bg-[#f0f2f5] text-slate-900 font-sans"
+      className="flex flex-col bg-white text-slate-900 font-sans"
       style={{ position: "fixed", inset: 0, overflow: "hidden" }}
     >
       {/* Header - always fixed at top, never scrolls */}

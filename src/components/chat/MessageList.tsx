@@ -98,7 +98,7 @@ export const MessageList: React.FC<MessageListProps> = ({
       <div
         ref={containerRef}
         onScroll={handleScroll}
-        className="h-full overflow-y-auto px-4 md:px-6 py-4 space-y-4 bg-[#f0f2f5]"
+        className="h-full overflow-y-auto px-3 md:px-4 py-3 space-y-2 bg-white"
       >
         {/* Load More Spinner */}
         {hasMore && (
