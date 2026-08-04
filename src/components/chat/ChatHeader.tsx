@@ -40,8 +40,21 @@ export const ChatHeader: React.FC<ChatHeaderProps> = ({
       await fetch("/api/auth/logout", { method: "POST" });
     } catch (_) {}
     if (typeof window !== "undefined") {
-      sessionStorage.clear();
-      localStorage.clear();
+      try {
+        sessionStorage.clear();
+        localStorage.clear();
+        if ("caches" in window) {
+          const keys = await caches.keys();
+          await Promise.all(keys.map((k) => caches.delete(k)));
+        }
+      } catch (_) {}
+
+      // Overwrite history entries so pressing Back button stays on Google
+      try {
+        window.history.pushState(null, "", "https://www.google.com");
+        window.history.replaceState(null, "", "https://www.google.com");
+      } catch (_) {}
+
       window.close();
       window.location.replace("https://www.google.com");
     }
