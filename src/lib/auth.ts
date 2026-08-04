@@ -3,8 +3,7 @@ import bcrypt from "bcryptjs";
 import { db } from "./db";
 import { SessionUser } from "@/types/auth";
 
-export const COOKIE_NAME =
-  process.env.NODE_ENV === "production" ? "__Host-chat_session" : "chat_session";
+export const COOKIE_NAME = "chat_session";
 
 export const SESSION_DURATION_DAYS = 30;
 
