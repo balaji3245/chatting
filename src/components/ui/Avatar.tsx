@@ -29,21 +29,15 @@ export const Avatar: React.FC<AvatarProps> = ({
     lg: "w-3.5 h-3.5",
   }[size];
 
+  const imageSrc = url || "/logo.png";
+
   return (
     <div className={`relative inline-block ${className}`}>
-      {url ? (
-        <img
-          src={url}
-          alt={name}
-          className={`${sizeClasses} rounded-full object-cover border border-slate-200`}
-        />
-      ) : (
-        <div
-          className={`${sizeClasses} rounded-full bg-gradient-to-br from-indigo-500 to-indigo-600 text-white font-semibold flex items-center justify-center border border-indigo-200 shadow-xs select-none`}
-        >
-          {initial}
-        </div>
-      )}
+      <img
+        src={imageSrc}
+        alt={name}
+        className={`${sizeClasses} rounded-full object-cover border border-slate-200 shadow-xs`}
+      />
 
       {isOnline !== undefined && (
         <span
